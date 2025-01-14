@@ -6,14 +6,14 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-using com.outsystems.Structures;
+using TokenManager.Structures;
 
 using Jose;
 using Jose.keys;
 
-namespace com.outsystems
+namespace TokenManager
 {
-    public class TokenManager : ITokenManager
+    public class TokenManagerService : ITokenManager
     {
         private byte[] x = { REMOVED-EC-KEY-BYTES };
         private byte[] y = { REMOVED-EC-KEY-BYTES };
@@ -27,15 +27,15 @@ namespace com.outsystems
             return json;
         }
 
-        public string DecodeTokenFromPrivateKeyJWT(string encodedToken)
-        {
-            var privateKey = EcdhKey.New(x, y, d, CngKeyUsages.KeyAgreement);
-            Jwk jwk = new Jwk(privateKey, isPrivate: true);
-            string json = Jose.JWT.Decode(encodedToken, jwk);
-            return json;
-        }
+        //public string DecodeTokenFromPrivateKeyJWT(string encodedToken)
+        //{
+        //    var privateKey = EcdhKey.New(x, y, d, CngKeyUsages.KeyAgreement);
+        //    Jwk jwk = new Jwk(privateKey, isPrivate: true);
+        //    string json = Jose.JWT.Decode(encodedToken, jwk);
+        //    return json;
+        //}
 
-        public string EncodeTokenFromPrivateKeyJWT(string kty, string use, string crv, string kid, string algo, List<com.outsystems.Structures.PKJWT_Claim> claims)
+        public string EncodeTokenFromPrivateKeyJWT(string kty, string use, string crv, string kid, string algo, List<TokenManager.Structures.PKJWT_Claim> claims)
         {
             Jwk jwk = createJWK(kty, use, crv, kid, algo);
 
@@ -99,7 +99,7 @@ namespace com.outsystems
 
         public string PKJWT_GetBuildInfo_Ext()
         {
-            return ReadResource("com.outsystems.buildinfo.txt");
+            return ReadResource("TokenManager.buildinfo.txt");
         }
     }
 }
