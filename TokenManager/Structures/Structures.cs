@@ -1,7 +1,7 @@
 using OutSystems.ExternalLibraries.SDK;
 using Newtonsoft.Json;
 
-namespace com.outsystems.Structures
+namespace TokenManager.Structures
 {
 
     [OSStructure(Description = "Claim")]

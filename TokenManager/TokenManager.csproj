@@ -7,21 +7,27 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\PrivateKeyJWTIcon.png">
-      <LogicalName>com.outsystems.PrivateKeyJWTIcon.png</LogicalName>
+      <LogicalName>TokenManager.PrivateKeyJWTIcon.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\buildinfo.txt">
-      <LogicalName>com.outsystems.buildinfo.txt</LogicalName>
+      <LogicalName>TokenManager.buildinfo.txt</LogicalName>
     </EmbeddedResource>    
     <Content Include="resources\*.*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <CSFile Include="*.cs" Exclue="BuildNumberChecker.cs"/>
+    <CSFile Include="*.cs" Exclue="BuildNumberChecker.cs" />
+    <Compile Remove="Algorithms\**" />
+    <Compile Remove="Helpers\**" />
+    <CSFile Remove="Algorithms\**" />
+    <CSFile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Algorithms\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Algorithms\**" />
+    <None Remove="Helpers\**" />
     <PackageReference Include="OutSystems.ExternalLibraries.SDK" Version="*" />
     <PackageReference Include="Newtonsoft.Json" Version="*" />
     <PackageReference Include="jose-jwt" Version="*" />
-    <Folder Include="Algorithms\" />
-    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

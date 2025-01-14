@@ -6,14 +6,14 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-using com.outsystems.Structures;
+using TokenManager.Structures;
 
 using Jose;
 using Jose.keys;
 
-namespace com.outsystems
+namespace TokenManager
 {
-    public class TokenManager : ITokenManager
+    public class TokenManagerService : ITokenManager
     {
         private byte[] x = { 4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9 };
         private byte[] y = { 131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53 };
@@ -27,15 +27,15 @@ namespace com.outsystems
             return json;
         }
 
-        public string DecodeTokenFromPrivateKeyJWT(string encodedToken)
-        {
-            var privateKey = EcdhKey.New(x, y, d, CngKeyUsages.KeyAgreement);
-            Jwk jwk = new Jwk(privateKey, isPrivate: true);
-            string json = Jose.JWT.Decode(encodedToken, jwk);
-            return json;
-        }
+        //public string DecodeTokenFromPrivateKeyJWT(string encodedToken)
+        //{
+        //    var privateKey = EcdhKey.New(x, y, d, CngKeyUsages.KeyAgreement);
+        //    Jwk jwk = new Jwk(privateKey, isPrivate: true);
+        //    string json = Jose.JWT.Decode(encodedToken, jwk);
+        //    return json;
+        //}
 
-        public string EncodeTokenFromPrivateKeyJWT(string kty, string use, string crv, string kid, string algo, List<com.outsystems.Structures.PKJWT_Claim> claims)
+        public string EncodeTokenFromPrivateKeyJWT(string kty, string use, string crv, string kid, string algo, List<TokenManager.Structures.PKJWT_Claim> claims)
         {
             Jwk jwk = createJWK(kty, use, crv, kid, algo);
 
@@ -99,7 +99,7 @@ namespace com.outsystems
 
         public string PKJWT_GetBuildInfo_Ext()
         {
-            return ReadResource("com.outsystems.buildinfo.txt");
+            return ReadResource("TokenManager.buildinfo.txt");
         }
     }
 }
