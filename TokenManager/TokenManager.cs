@@ -11,6 +11,7 @@ using TokenManager.Structures;
 using Jose;
 using Jose.keys;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TokenManager
 {
@@ -65,7 +66,79 @@ namespace TokenManager
             string jwkString = jwk.ToJson();
             return jwk.ToJson();
         }
-       
+
+        public JWK_Pair CreateECJWKPair(string use, string crv, string kid, string algo)
+        {
+            JWK_Pair pair = new JWK_Pair();
+            var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var privateKey = ecdsa.ExportParameters(true);
+            var publicKey = ecdsa.ExportParameters(false);
+            Jwk prvwk = new Jwk
+            {
+                Kty = "EC",
+                Use = use,
+                Crv = crv,
+                X = Base64Url.Encode(publicKey.Q.X),
+                Y = Base64Url.Encode(publicKey.Q.Y),
+                D = Base64Url.Encode(privateKey.D),
+                KeyId = kid,
+                Alg = algo
+            };
+            Jwk pubJwk = new Jwk
+            {
+                Kty = "EC",
+                Use = use,
+                Crv = crv,
+                X = Base64Url.Encode(publicKey.Q.X),
+                Y = Base64Url.Encode(publicKey.Q.Y),
+                KeyId = kid,
+                Alg = algo
+            };
+            pair.publicKey = pubJwk.ToJson();
+            pair.privateKey = prvwk.ToJson();
+            return pair;
+        }
+
+        public JWK_Pair CreateRSAJWKPair(string use, string kid, string algo)
+        {
+            JWK_Pair pair = new JWK_Pair();
+            var rsa = new RSACryptoServiceProvider(2048);
+            var privateKey = rsa.ExportParameters(true);
+            var publicKey = rsa.ExportParameters(false);
+
+            Jwk prvwk = new Jwk
+            {
+                Kty = "RSA",
+                Use = use,
+                N = Base64Url.Encode(publicKey.Modulus),
+                E = Base64Url.Encode(publicKey.Exponent),
+                D = Base64Url.Encode(privateKey.D),
+                P = Base64Url.Encode(privateKey.P),
+                Q = Base64Url.Encode(privateKey.Q),
+                DP = Base64Url.Encode(privateKey.DP),
+                DQ = Base64Url.Encode(privateKey.DQ),
+                QI = Base64Url.Encode(privateKey.InverseQ),
+                KeyId = kid,
+                Alg = algo
+            };
+
+            Jwk pubJwk = new Jwk
+            {
+                Kty = "RSA",
+                Use = use,
+                N = Base64Url.Encode(publicKey.Modulus),
+                E = Base64Url.Encode(publicKey.Exponent),
+                KeyId = kid,
+                Alg = algo
+            };
+
+            pair.publicKey = pubJwk.ToJson();
+            pair.privateKey = prvwk.ToJson();
+
+            return pair;
+        }
+
+
 
         public string PKJWT_GetBuildInfo_Ext()
         {
