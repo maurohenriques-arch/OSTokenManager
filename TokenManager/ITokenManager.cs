@@ -23,6 +23,12 @@ namespace TokenManager
 
         [OSAction(Description = "Create a private JWK for encryption", ReturnName = "privateKey")]
         public string CreatePrivateJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo);
+        
+        [OSAction(Description = "Create an EC JWK Pair ()", ReturnName = "ECJWKPair")]
+        public JWK_Pair CreateECJWKPair(string use, string crv, string kid, [OSParameter(Description = "Signing and Encryption have diferent algorithms. For SingPass Encryption it must be at least ECDH-ES+A128KW")] string algo);
+
+        [OSAction(Description = "Create a RSA JWK Pair", ReturnName = "RSAJWKPair")]
+        public JWK_Pair CreateRSAJWKPair(string use, string kid, string algo);
 
         /// <summary>
         /// Retrieve unique build information of this custom library.
