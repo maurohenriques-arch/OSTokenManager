@@ -10,6 +10,7 @@ using TokenManager.Structures;
 
 using Jose;
 using Jose.keys;
+using Newtonsoft.Json;
 
 namespace TokenManager
 {
@@ -37,7 +38,7 @@ namespace TokenManager
 
         public string EncodeTokenFromPrivateKeyJWT(string kty, string use, string crv, string kid, string algo, List<TokenManager.Structures.PKJWT_Claim> claims)
         {
-            Jwk jwk = createJWK(kty, use, crv, kid, algo);
+            Jwk jwk = createECJWK(kty, use, crv, kid, algo);
 
             string jwkString = jwk.ToJson();
 
@@ -52,9 +53,23 @@ namespace TokenManager
         }
         public string CreatePublicJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
         {
-            Jwk jwk = createJWK(kty, use, crv, kid, algo);
+            Jwk jwk = createECJWK(kty, use, crv, kid, algo);
             string jwkString = jwk.ToJson();
             return jwk.ToJson();
+        }
+
+       
+        public string CreatePrivateJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
+        {
+            Jwk jwk = createECJWK(kty, use, crv, kid, algo);
+            string jwkString = jwk.ToJson();
+            return jwk.ToJson();
+        }
+       
+
+        public string PKJWT_GetBuildInfo_Ext()
+        {
+            return ReadResource("TokenManager.buildinfo.txt");
         }
 
         private Jwk createJWK(string kty, string use, string crv, string kid, string algo)
@@ -73,12 +88,26 @@ namespace TokenManager
             };
             return jwk;
         }
-        public string CreatePrivateJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
+
+        private Jwk createECJWK(string kty, string use, string crv, string kid, string algo)
         {
-            Jwk jwk = createJWK(kty, use, crv, kid, algo);
-            string jwkString = jwk.ToJson();
-            return jwk.ToJson();
+            var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var privateKey = ecdsa.ExportParameters(true);
+            var publicKey = ecdsa.ExportParameters(false);
+            Jwk jwk = new Jwk
+            {
+                Kty = kty,
+                Use = use,
+                Crv = crv,
+                X = Base64Url.Encode(publicKey.Q.X),
+                Y = Base64Url.Encode(publicKey.Q.Y),
+                D = Base64Url.Encode(privateKey.D),
+                KeyId = kid,
+                Alg = algo
+            };
+            return jwk;
         }
+
         private string ReadResource(string name)
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -97,9 +126,5 @@ namespace TokenManager
             return string.Empty;
         }
 
-        public string PKJWT_GetBuildInfo_Ext()
-        {
-            return ReadResource("TokenManager.buildinfo.txt");
-        }
     }
 }
