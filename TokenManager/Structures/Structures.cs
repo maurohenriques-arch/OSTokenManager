@@ -14,4 +14,15 @@ namespace TokenManager.Structures
         public string value;
     }
 
+
+    [OSStructure(Description = "JWKPair")]
+    public struct JWK_Pair
+    {
+
+        [OSStructureField(DataType = OSDataType.Text, Description = "privateKey", IsMandatory = true)]
+        public string privateKey;
+        [OSStructureField(DataType = OSDataType.Text, Description = "publicKey", IsMandatory = true)]
+        public string publicKey;
+    }
+
 }
