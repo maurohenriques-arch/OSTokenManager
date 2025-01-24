@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TokenManager.Structures;
 
 namespace TokenManager.Tests
 {
@@ -20,6 +21,22 @@ namespace TokenManager.Tests
             string decodedJWT = "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjUxMzgzM2EyLTQ1MWYtNDE1OC04YjZiLTg4NzViNGNjMTUwOCJ9.eyJpc3MiOiJodHRwczovL3N0Zy1pZC5zaW5ncGFzcy5nb3Yuc2ciLCJzdWIiOiJ1PTg4MWFkMmVhLTAxMjgtNDI3NS05MjIwLWRkN2JjOWYxMDYwZSIsImF1ZCI6IlFqUElXN29ZeDBNYkNoWU1pNDhGalhRbTJPV0NtejNPIiwiZW1haWwiOnsibGFzdHVwZGF0ZWQiOiIyMDI1LTAxLTA4Iiwic291cmNlIjoiNCIsImNsYXNzaWZpY2F0aW9uIjoiQyIsInZhbHVlIjoibXlpbmZvdGVzdGluZ0BnbWFpbC5jb20ifSwibmFtZSI6eyJsYXN0dXBkYXRlZCI6IjIwMjUtMDEtMDgiLCJzb3VyY2UiOiIxIiwiY2xhc3NpZmljYXRpb24iOiJDIiwidmFsdWUiOiJTQU0gWUVFIn0sImlhdCI6MTczNjg1MTg3OH0.tYCEsa-MDe5dfh-GM5EgLxz-DGduMjZGiogYwpt6STfSua1rwTStmxRN1PGimixPC-YsgxLQwmMdiNz_jFYEow";
             string decoded = instance.DecodeTokenFromPrivateKeyJWT(encodedToken, jwks);
             Assert.AreEqual(decodedJWT, decoded);
+        }
+
+        [TestMethod()]
+        public void CreateECJWKPair()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            JWK_Pair pair = instance.CreateECJWKPair("enc", "P-256", "eueiryte87e97897", "ECDH-ES+A128KW");
+        
+        }
+
+        [TestMethod()]
+        public void CreateRSAJWKPair()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            JWK_Pair pair = instance.CreateRSAJWKPair("enc", "eueiryte87e97897", "RSA-OAEP");
+
         }
     }
 }
