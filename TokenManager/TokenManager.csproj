@@ -4,6 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- <Nullable>enable</Nullable> -->
     <Deterministic>false</Deterministic>
+    <Configurations>Debug;Release;ODC</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\PrivateKeyJWTIcon.png">
