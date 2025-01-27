@@ -1409,40 +1409,36 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mph\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\sergi\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mph\\Source\\Repos\\OSTokenManager\\TokenManagerTests\\TokenManagerTests.csproj",
+      "projectUniqueName": "F:\\Work\\GIT\\OSTokenManager\\TokenManagerTests\\TokenManagerTests.csproj",
       "projectName": "TokenManagerTests",
-      "projectPath": "C:\\Users\\mph\\Source\\Repos\\OSTokenManager\\TokenManagerTests\\TokenManagerTests.csproj",
-      "packagesPath": "C:\\Users\\mph\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mph\\Source\\Repos\\OSTokenManager\\TokenManagerTests\\obj\\",
+      "projectPath": "F:\\Work\\GIT\\OSTokenManager\\TokenManagerTests\\TokenManagerTests.csproj",
+      "packagesPath": "C:\\Users\\sergi\\.nuget\\packages\\",
+      "outputPath": "F:\\Work\\GIT\\OSTokenManager\\TokenManagerTests\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\mph\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\sergi\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\OS\\Nugets": {},
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "F:\\Work\\Packages": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\mph\\Source\\Repos\\OSTokenManager\\TokenManager\\TokenManager.csproj": {
-              "projectPath": "C:\\Users\\mph\\Source\\Repos\\OSTokenManager\\TokenManager\\TokenManager.csproj"
+            "F:\\Work\\GIT\\OSTokenManager\\TokenManager\\TokenManager.csproj": {
+              "projectPath": "F:\\Work\\GIT\\OSTokenManager\\TokenManager\\TokenManager.csproj"
             }
           }
         }
@@ -1456,8 +1452,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.100"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -1496,7 +1491,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
