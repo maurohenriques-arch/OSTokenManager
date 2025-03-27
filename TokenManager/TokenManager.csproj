@@ -5,6 +5,7 @@
     <!-- <Nullable>enable</Nullable> -->
     <Deterministic>false</Deterministic>
     <Configurations>Debug;Release;ODC</Configurations>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\PrivateKeyJWTIcon.png">
