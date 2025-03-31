@@ -52,7 +52,7 @@ namespace TokenManager
             string token = Jose.JWT.Encode(payload, jwk, JweAlgorithm.ECDH_ES_A128KW, JweEncryption.A128GCM);
             return token;
         }
-        public string CreatePublicJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
+        private string CreatePublicJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
         {
             Jwk jwk = createECJWK(kty, use, crv, kid, algo);
             string jwkString = jwk.ToJson();
@@ -60,7 +60,7 @@ namespace TokenManager
         }
 
        
-        public string CreatePrivateJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
+        private string CreatePrivateJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
         {
             Jwk jwk = createECJWK(kty, use, crv, kid, algo);
             string jwkString = jwk.ToJson();
