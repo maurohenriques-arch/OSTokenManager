@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TokenManagerTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+50f84db416fe4d0aaaa695b792f15a90e9243cd9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e719db8f7e56d725a4eed361d511d43ce7a9e09")]
 [assembly: System.Reflection.AssemblyProductAttribute("TokenManagerTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TokenManagerTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
