@@ -12,6 +12,7 @@ using Jose;
 using Jose.keys;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Security;
 
 namespace TokenManager
 {
@@ -199,5 +200,62 @@ namespace TokenManager
             return string.Empty;
         }
 
+        public TokenResponse GetTokensFromUrl(
+            string code,
+            string clientId,
+            string clientSecret,
+            string redirectUri,
+            string grantType,
+            string apiURI,
+            bool ignoreCertificateValidation,
+            byte[] certificateToAllow = null)
+        {
+            var handler = new HttpClientHandler();
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            handler.ServerCertificateCustomValidationCallback =
+                (httpRequestMessage, cert, cetChain, sslPolicyErrors) =>
+                {
+                    if (sslPolicyErrors == SslPolicyErrors.None)
+                        return true;
+
+                    if (ignoreCertificateValidation)
+                    {
+                        return true;
+                    }
+
+                    if (certificateToAllow != null)
+                    {
+                        // Explicitly trust the provided certificate
+                        return cert.Equals(certificateToAllow);
+                    };
+                    return false;
+                };
+
+            using (HttpClient client = new HttpClient(handler))
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    {"code", code},
+                    {"client_id", clientId},
+                    {"client_secret", clientSecret},
+                    {"redirect_uri", redirectUri},
+                    {"grant_type", grantType}
+                };
+                var content = new FormUrlEncodedContent(formData);
+
+                var webRequest = new HttpRequestMessage(HttpMethod.Post, apiURI)
+                {
+                    Content = content
+                };
+
+                var response = client.Send(webRequest);
+                response.EnsureSuccessStatusCode();
+
+                string responseJson = response.Content.ReadAsStringAsync().Result;
+
+                TokenResponse tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseJson);
+                return tokenResponse;
+            }
+        }
     }
 }

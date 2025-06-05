@@ -38,5 +38,24 @@ namespace TokenManager.Tests
             JWK_Pair pair = instance.CreateRSAJWKPair("enc", "eueiryte87e97897", "RSA-OAEP");
 
         }
+
+        [TestMethod()]
+        public void GetTokensFromUrlTest()
+        {
+            TokenManagerService tms = new TokenManagerService();
+
+            string code = "";
+            string clientId = "";
+            string clientSecret = "";
+            string redirectUri = "https://professionalservices-dev.outsystems.app/ODCAuthBroker/rest/OutboundOIDCAPI/oauth2callback";
+            string grantType = "authorization_code";
+            string apiURL = "https://oauth2.googleapis.com/token";
+            bool ignoreCertificateValidation = true;
+            byte[] certificateToAllow = null;
+
+            var response = tms.GetTokensFromUrl(code, clientId, clientSecret, redirectUri, grantType, apiURL, ignoreCertificateValidation, certificateToAllow);
+
+            Assert.IsNotNull(response);
+        }
     }
 }
