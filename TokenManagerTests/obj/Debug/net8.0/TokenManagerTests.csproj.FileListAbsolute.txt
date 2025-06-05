@@ -383,9 +383,6 @@ C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\Microsoft.Visual
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\NuGet.Frameworks.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\OutSystems.ExternalLibraries.SDK.dll
-C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\System.IO.Pipelines.dll
-C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\System.Text.Encodings.Web.dll
-C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\System.Text.Json.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\de\Microsoft.TestPlatform.CoreUtilities.resources.dll
@@ -464,7 +461,6 @@ C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\ru\Microsoft.Vis
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\tr\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\zh-Hans\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
-C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\TokenManager.dll
 C:\Work\Repos\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\TokenManager.pdb
