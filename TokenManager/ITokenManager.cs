@@ -33,14 +33,22 @@ namespace TokenManager
 
         [OSAction(Description = "Call POST token rest service with extra HTTPS configurations.", ReturnName = "TokenResponse")]
         public TokenResponse GetTokensFromUrl(
+            [OSParameter(DataType = OSDataType.Text)]
             string code,
+            [OSParameter(DataType = OSDataType.Text)]
             string clientId,
+            [OSParameter(DataType = OSDataType.Text)]
             string clientSecret,
+            [OSParameter(DataType = OSDataType.Text)]
             string redirectUri,
+            [OSParameter(DataType = OSDataType.Text)]
             string grantType,
+            [OSParameter(DataType = OSDataType.Text)]
             string apiURI,
-            bool ignoreCertificateValidation,
-            byte[] certificateToAllow = null);
+            [OSParameter(DataType = OSDataType.Boolean)]
+            bool ignoreCertificateValidation//,
+            //byte[] certificateToAllow = null
+            );
 
 
     }

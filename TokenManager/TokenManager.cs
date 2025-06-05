@@ -207,9 +207,15 @@ namespace TokenManager
             string redirectUri,
             string grantType,
             string apiURI,
-            bool ignoreCertificateValidation,
-            byte[] certificateToAllow = null)
+            bool ignoreCertificateValidation//,
+            //byte[] certificateToAllow = null
+            )
         {
+            if (ignoreCertificateValidation)
+            {
+                return new TokenResponse { AccessToken="a", ExpiresIn=1, IdToken="a", RefreshToken="a", Scope="a", TokenType = "a" }; 
+            }
+
             var handler = new HttpClientHandler();
             handler.ClientCertificateOptions = ClientCertificateOption.Manual;
             handler.ServerCertificateCustomValidationCallback =
@@ -223,11 +229,11 @@ namespace TokenManager
                         return true;
                     }
 
-                    if (certificateToAllow != null)
-                    {
-                        // Explicitly trust the provided certificate
-                        return cert.Equals(certificateToAllow);
-                    };
+                    //if (certificateToAllow != null)
+                    //{
+                    //    // Explicitly trust the provided certificate
+                    //    return cert.Equals(certificateToAllow);
+                    //};
                     return false;
                 };
 
