@@ -31,6 +31,16 @@ namespace TokenManager
         [OSAction(Description = "Get unique build information of this custom library.", ReturnName = "buildInfo")]
         public string PKJWT_GetBuildInfo_Ext();
 
+        public TokenResponse GetTokensFromUrl(
+            string code,
+            string clientId,
+            string clientSecret,
+            string redirectUri,
+            string grantType,
+            string apiURI,
+            bool ignoreCertificateValidation,
+            byte[] certificateToAllow = null);
+
 
     }
 }
