@@ -33,7 +33,7 @@ namespace TokenManager.Structures
         [OSStructureField(DataType = OSDataType.Text, Description = "Access Token", IsMandatory = true)]
         [JsonPropertyName("access_token")]
         public string AccessToken;
-        [OSStructureField(DataType = OSDataType.Text, Description = "Expiration time for token", IsMandatory = true)]
+        [OSStructureField(DataType = OSDataType.LongInteger, Description = "Expiration time for token", IsMandatory = true)]
         [JsonPropertyName("expires_in")]
         public long ExpiresIn;
         [OSStructureField(DataType = OSDataType.Text, Description = "Refresh Token", IsMandatory = true)]
