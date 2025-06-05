@@ -31,7 +31,7 @@ namespace TokenManager
         [OSAction(Description = "Get unique build information of this custom library.", ReturnName = "buildInfo")]
         public string PKJWT_GetBuildInfo_Ext();
 
-        [OSAction(Description = "Call POST token rest service with extra HTTPS configurations.", ReturnName = "buildInfo")]
+        [OSAction(Description = "Call POST token rest service with extra HTTPS configurations.", ReturnName = "TokenResponse")]
         public TokenResponse GetTokensFromUrl(
             string code,
             string clientId,
