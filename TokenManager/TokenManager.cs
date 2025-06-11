@@ -253,7 +253,15 @@ namespace TokenManager
 
                 string responseJson = response.Content.ReadAsStringAsync().Result;
 
-                TokenResponse tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseJson);
+                var jsonTokenResponse = System.Text.Json.JsonSerializer.Deserialize<JSONTokenResponse>(responseJson);
+                TokenResponse tokenResponse = new TokenResponse
+                {
+                    AccessToken = jsonTokenResponse.AccessToken,
+                    ExpiresIn = jsonTokenResponse.ExpiresIn,
+                    IdToken = jsonTokenResponse.IdToken,
+                    Scope = jsonTokenResponse.Scope,
+                    TokenType = jsonTokenResponse.TokenType 
+                };
                 return tokenResponse;
             }
         }
