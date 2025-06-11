@@ -211,11 +211,6 @@ namespace TokenManager
             byte[] certificateToAllow = null
             )
         {
-            if (ignoreCertificateValidation)
-            {
-                return new TokenResponse { AccessToken="a", ExpiresIn=1, IdToken="a", RefreshToken="a", Scope="a", TokenType = "a" }; 
-            }
-
             var handler = new HttpClientHandler();
             handler.ClientCertificateOptions = ClientCertificateOption.Manual;
             handler.ServerCertificateCustomValidationCallback =
