@@ -46,8 +46,8 @@ namespace TokenManager
             [OSParameter(DataType = OSDataType.Text)]
             string apiURI,
             [OSParameter(DataType = OSDataType.Boolean)]
-            bool ignoreCertificateValidation//,
-            //byte[] certificateToAllow = null
+            bool ignoreCertificateValidation,
+            byte[] certificateToAllow = null
             );
 
 

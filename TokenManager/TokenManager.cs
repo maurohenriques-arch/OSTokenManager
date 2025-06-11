@@ -207,8 +207,8 @@ namespace TokenManager
             string redirectUri,
             string grantType,
             string apiURI,
-            bool ignoreCertificateValidation//,
-            //byte[] certificateToAllow = null
+            bool ignoreCertificateValidation,
+            byte[] certificateToAllow = null
             )
         {
             if (ignoreCertificateValidation)

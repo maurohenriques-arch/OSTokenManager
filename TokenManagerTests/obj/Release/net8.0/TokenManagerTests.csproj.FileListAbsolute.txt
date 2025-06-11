@@ -23,9 +23,6 @@ F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\Microsoft.Visual
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\Newtonsoft.Json.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\NuGet.Frameworks.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\OutSystems.ExternalLibraries.SDK.dll
-F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\System.IO.Pipelines.dll
-F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\System.Text.Encodings.Web.dll
-F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\System.Text.Json.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\de\Microsoft.TestPlatform.CoreUtilities.resources.dll
@@ -104,7 +101,6 @@ F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\ru\Microsoft.Vis
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\tr\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\zh-Hans\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
-F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\TokenManager.dll
 F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Release\net8.0\TokenManager.pdb
