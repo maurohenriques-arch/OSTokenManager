@@ -481,3 +481,7 @@ C:\Work\Repos\OSTokenManager\TokenManagerTests\obj\Debug\net8.0\refint\TokenMana
 C:\Work\Repos\OSTokenManager\TokenManagerTests\obj\Debug\net8.0\TokenManagerTests.pdb
 C:\Work\Repos\OSTokenManager\TokenManagerTests\obj\Debug\net8.0\TokenManagerTests.genruntimeconfig.cache
 C:\Work\Repos\OSTokenManager\TokenManagerTests\obj\Debug\net8.0\ref\TokenManagerTests.dll
+F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\System.IO.Pipelines.dll
+F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\System.Text.Encodings.Web.dll
+F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\System.Text.Json.dll
+F:\Work\GIT\OSTokenManager\TokenManagerTests\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
