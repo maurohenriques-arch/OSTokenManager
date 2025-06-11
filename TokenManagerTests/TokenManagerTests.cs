@@ -44,9 +44,9 @@ namespace TokenManager.Tests
         {
             TokenManagerService tms = new TokenManagerService();
 
-            string code = "4/0AUJR-x51q041ITCaoHKA91qYb9MnBA4gnM6Lde0RxLwyYt9llTEP_DLcwIMfJE_ZkQwzaA";
-            string clientId = "196326152049-mkmtavl0e0o6glv1kr5r0chmmpap4609.apps.googleusercontent.com";
-            string clientSecret = "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";
+            string code = "";
+            string clientId = "";
+            string clientSecret = "";
             string redirectUri = "https://professionalservices-dev.outsystems.app/ODCAuthBroker/rest/OutboundOIDCAPI/oauth2callback";
             string grantType = "authorization_code";
             string apiURL = "https://oauth2.googleapis.com/token";
