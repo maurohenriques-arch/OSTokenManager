@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System;
 
 using TokenManager.Structures;
 
@@ -244,6 +245,12 @@ namespace TokenManager
                 };
                 var content = new FormUrlEncodedContent(formData);
 
+                if (apiURI.Contains("secure-gateway"))
+                {
+                    string secureGatewayBaseURL = Environment.GetEnvironmentVariable("SECURE_GATEWAY");
+                    apiURI.Replace("secure-gateway", secureGatewayBaseURL);
+                }
+
                 var webRequest = new HttpRequestMessage(HttpMethod.Post, apiURI)
                 {
                     Content = content
@@ -265,6 +272,11 @@ namespace TokenManager
                 };
                 return tokenResponse;
             }
+        }
+
+        public string GetSecureGatewayBaseURL()
+        {
+            return Environment.GetEnvironmentVariable("SECURE_GATEWAY");
         }
     }
 }

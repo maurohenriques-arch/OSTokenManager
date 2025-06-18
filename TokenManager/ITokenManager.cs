@@ -50,6 +50,9 @@ namespace TokenManager
             byte[] certificateToAllow = null
             );
 
+        [OSAction(Description = "Get the External Library generated Secure Gateway URL", ReturnName = "URL")]
+        public string GetSecureGatewayBaseURL();
+
 
     }
 }
