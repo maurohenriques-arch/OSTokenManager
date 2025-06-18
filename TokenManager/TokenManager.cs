@@ -248,7 +248,7 @@ namespace TokenManager
                 if (apiURI.Contains("secure-gateway"))
                 {
                     string secureGatewayBaseURL = Environment.GetEnvironmentVariable("SECURE_GATEWAY");
-                    apiURI.Replace("secure-gateway", secureGatewayBaseURL);
+                    apiURI = apiURI.Replace("secure-gateway", secureGatewayBaseURL);
                 }
 
                 var webRequest = new HttpRequestMessage(HttpMethod.Post, apiURI)
