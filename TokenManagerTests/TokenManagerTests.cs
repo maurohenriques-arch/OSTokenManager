@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net.Security;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TokenManager.Structures;
@@ -59,6 +62,64 @@ namespace TokenManager.Tests
             var claims = new List<PKJWT_Claim> { new PKJWT_Claim { key = "sub", value = "user-1" } };
 
             Assert.ThrowsException<ArgumentException>(() => instance.EncodeTokenFromPrivateKeyJWT(pair.privateKey, claims));
+        }
+
+        private static X509Certificate2 CreateSelfSignedCertificate(string subject)
+        {
+            using RSA rsa = RSA.Create(2048);
+            var request = new CertificateRequest(subject, rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            return request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1));
+        }
+
+        [TestMethod()]
+        public void ValidateServerCertificate_PinnedCertificateMatches_Accepts()
+        {
+            X509Certificate2 cert = CreateSelfSignedCertificate("CN=pinned");
+
+            bool accepted = TokenManagerService.ValidateServerCertificate(cert, SslPolicyErrors.RemoteCertificateChainErrors, false, cert.RawData);
+
+            Assert.IsTrue(accepted);
+        }
+
+        [TestMethod()]
+        public void ValidateServerCertificate_PinnedCertificateDiffers_RejectsEvenWhenIgnoring()
+        {
+            X509Certificate2 server = CreateSelfSignedCertificate("CN=server");
+            X509Certificate2 pinned = CreateSelfSignedCertificate("CN=pinned");
+
+            bool accepted = TokenManagerService.ValidateServerCertificate(server, SslPolicyErrors.RemoteCertificateChainErrors, true, pinned.RawData);
+
+            Assert.IsFalse(accepted);
+        }
+
+        [TestMethod()]
+        public void ValidateServerCertificate_NoPin_NoErrors_Accepts()
+        {
+            X509Certificate2 cert = CreateSelfSignedCertificate("CN=nopin");
+
+            bool accepted = TokenManagerService.ValidateServerCertificate(cert, SslPolicyErrors.None, false, null);
+
+            Assert.IsTrue(accepted);
+        }
+
+        [TestMethod()]
+        public void ValidateServerCertificate_NoPin_ErrorsAndNotIgnoring_Rejects()
+        {
+            X509Certificate2 cert = CreateSelfSignedCertificate("CN=nopin");
+
+            bool accepted = TokenManagerService.ValidateServerCertificate(cert, SslPolicyErrors.RemoteCertificateChainErrors, false, null);
+
+            Assert.IsFalse(accepted);
+        }
+
+        [TestMethod()]
+        public void ValidateServerCertificate_NoPin_ErrorsAndIgnoring_Accepts()
+        {
+            X509Certificate2 cert = CreateSelfSignedCertificate("CN=nopin");
+
+            bool accepted = TokenManagerService.ValidateServerCertificate(cert, SslPolicyErrors.RemoteCertificateChainErrors, true, null);
+
+            Assert.IsTrue(accepted);
         }
 
         [TestMethod()]
