@@ -60,10 +60,76 @@ namespace TokenManager
             return jwk.ToJson();
         }
 
+        private static readonly string[] EcEncryptionAlgorithms = { "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW" };
+        private static readonly string[] RsaEncryptionAlgorithms = { "RSA-OAEP", "RSA-OAEP-256" };
+        private static readonly string[] RsaSignatureAlgorithms = { "RS256", "RS384", "RS512", "PS256", "PS384", "PS512" };
+
+        private static void ValidateUse(string use)
+        {
+            if (use != "enc" && use != "sig")
+            {
+                throw new ArgumentException($"Unsupported use '{use}'. Supported values: enc, sig.", nameof(use));
+            }
+        }
+
+        /// <summary>
+        /// Validates the EC parameters and returns the matching curve.
+        /// Supported curves: P-256 (ES256), P-384 (ES384), P-521 (ES512) for signing;
+        /// ECDH-ES family for encryption.
+        /// </summary>
+        private static ECCurve ValidateEcParameters(string use, string crv, string algo)
+        {
+            ValidateUse(use);
+
+            ECCurve curve;
+            string signatureAlgorithm;
+            switch (crv)
+            {
+                case "P-256":
+                    curve = ECCurve.NamedCurves.nistP256;
+                    signatureAlgorithm = "ES256";
+                    break;
+                case "P-384":
+                    curve = ECCurve.NamedCurves.nistP384;
+                    signatureAlgorithm = "ES384";
+                    break;
+                case "P-521":
+                    curve = ECCurve.NamedCurves.nistP521;
+                    signatureAlgorithm = "ES512";
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported EC curve '{crv}'. Supported curves: P-256, P-384, P-521.", nameof(crv));
+            }
+
+            if (use == "sig" && algo != signatureAlgorithm)
+            {
+                throw new ArgumentException($"For curve {crv} and use sig the algorithm must be {signatureAlgorithm}.", nameof(algo));
+            }
+
+            if (use == "enc" && !EcEncryptionAlgorithms.Contains(algo))
+            {
+                throw new ArgumentException($"Unsupported EC encryption algorithm '{algo}'. Supported: {string.Join(", ", EcEncryptionAlgorithms)}.", nameof(algo));
+            }
+
+            return curve;
+        }
+
+        private static void ValidateRsaParameters(string use, string algo)
+        {
+            ValidateUse(use);
+
+            string[] allowed = use == "enc" ? RsaEncryptionAlgorithms : RsaSignatureAlgorithms;
+            if (!allowed.Contains(algo))
+            {
+                throw new ArgumentException($"Unsupported RSA algorithm '{algo}' for use {use}. Supported: {string.Join(", ", allowed)}.", nameof(algo));
+            }
+        }
+
         public JWK_Pair CreateECJWKPair(string use, string crv, string kid, string algo)
         {
+            ECCurve curve = ValidateEcParameters(use, crv, algo);
             JWK_Pair pair = new JWK_Pair();
-            var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var ecdsa = ECDsa.Create(curve);
             var privateKey = ecdsa.ExportParameters(true);
             var publicKey = ecdsa.ExportParameters(false);
             Jwk prvwk = new Jwk
@@ -94,6 +160,7 @@ namespace TokenManager
 
         public JWK_Pair CreateRSAJWKPair(string use, string kid, string algo)
         {
+            ValidateRsaParameters(use, algo);
             JWK_Pair pair = new JWK_Pair();
             var rsa = new RSACryptoServiceProvider(2048);
             var privateKey = rsa.ExportParameters(true);
@@ -140,7 +207,8 @@ namespace TokenManager
 
         private Jwk createECJWK(string kty, string use, string crv, string kid, string algo)
         {
-            var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            ECCurve curve = ValidateEcParameters(use, crv, algo);
+            var ecdsa = ECDsa.Create(curve);
             var privateKey = ecdsa.ExportParameters(true);
             var publicKey = ecdsa.ExportParameters(false);
             Jwk jwk = new Jwk

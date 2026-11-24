@@ -122,6 +122,77 @@ namespace TokenManager.Tests
             Assert.IsTrue(accepted);
         }
 
+        private static void AssertEcRoundTrip(string crv, string algo)
+        {
+            TokenManagerService instance = new TokenManagerService();
+            JWK_Pair pair = instance.CreateECJWKPair("enc", crv, "kid-" + crv, algo);
+
+            using JsonDocument publicJwk = JsonDocument.Parse(pair.publicKey);
+            Assert.AreEqual(crv, publicJwk.RootElement.GetProperty("crv").GetString());
+
+            var claims = new List<PKJWT_Claim> { new PKJWT_Claim { key = "sub", value = "user-" + crv } };
+            string token = instance.EncodeTokenFromPrivateKeyJWT(pair.publicKey, claims);
+            string json = instance.DecodeTokenFromPrivateKeyJWT(token, pair.privateKey);
+
+            using JsonDocument doc = JsonDocument.Parse(json);
+            Assert.AreEqual("user-" + crv, doc.RootElement.GetProperty("sub").GetString());
+        }
+
+        [TestMethod()]
+        public void CreateECJWKPair_P384_RoundTrips()
+        {
+            AssertEcRoundTrip("P-384", "ECDH-ES+A128KW");
+        }
+
+        [TestMethod()]
+        public void CreateECJWKPair_P521_RoundTrips()
+        {
+            AssertEcRoundTrip("P-521", "ECDH-ES+A128KW");
+        }
+
+        [TestMethod()]
+        public void CreateECJWKPair_UnsupportedCurve_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            Assert.ThrowsException<ArgumentException>(() => instance.CreateECJWKPair("enc", "secp256k1", "kid", "ECDH-ES+A128KW"));
+        }
+
+        [TestMethod()]
+        public void CreateECJWKPair_UnsupportedEncryptionAlgorithm_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            Assert.ThrowsException<ArgumentException>(() => instance.CreateECJWKPair("enc", "P-256", "kid", "RSA-OAEP"));
+        }
+
+        [TestMethod()]
+        public void CreateECJWKPair_SigAlgorithmDoesNotMatchCurve_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            Assert.ThrowsException<ArgumentException>(() => instance.CreateECJWKPair("sig", "P-384", "kid", "ES256"));
+        }
+
+        [TestMethod()]
+        public void CreateECJWKPair_InvalidUse_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            Assert.ThrowsException<ArgumentException>(() => instance.CreateECJWKPair("both", "P-256", "kid", "ECDH-ES+A128KW"));
+        }
+
+        [TestMethod()]
+        public void CreateRSAJWKPair_SignatureAlgorithm_Accepts()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            JWK_Pair pair = instance.CreateRSAJWKPair("sig", "kid", "RS256");
+            Assert.IsNotNull(pair.publicKey);
+        }
+
+        [TestMethod()]
+        public void CreateRSAJWKPair_UnsupportedAlgorithm_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            Assert.ThrowsException<ArgumentException>(() => instance.CreateRSAJWKPair("enc", "kid", "ES256"));
+        }
+
         [TestMethod()]
         public void CreateRSAJWKPair()
         {

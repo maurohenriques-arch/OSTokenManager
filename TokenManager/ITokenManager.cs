@@ -19,10 +19,10 @@ namespace TokenManager
         public string EncodeTokenFromPrivateKeyJWT(string recipientPublicJWK, List<TokenManager.Structures.PKJWT_Claim> claims);
 
         
-        [OSAction(Description = "Create an EC JWK Pair (private key and public key)", ReturnName = "ECJWKPair")]
-        public JWK_Pair CreateECJWKPair([OSParameter(Description = "For signing the value = sig. For Encryption the value = enc")] string use, [OSParameter(Description = "Curve type of the key, usualy P-256")] string crv, string kid, [OSParameter(Description = "Signing and Encryption have diferent algorithms. For SingPass Encryption it must be at least ECDH-ES+A128KW")] string algo);
+        [OSAction(Description = "Create an EC JWK Pair (private key and public key). Curves: P-256 (sig: ES256), P-384 (sig: ES384), P-521 (sig: ES512). Encryption (enc) algorithms: ECDH-ES, ECDH-ES+A128KW, ECDH-ES+A192KW, ECDH-ES+A256KW.", ReturnName = "ECJWKPair")]
+        public JWK_Pair CreateECJWKPair([OSParameter(Description = "Key use: sig (signing) or enc (encryption)")] string use, [OSParameter(Description = "Curve: P-256, P-384 or P-521")] string crv, string kid, [OSParameter(Description = "For sig: ES256 with P-256, ES384 with P-384, ES512 with P-521. For enc: ECDH-ES, ECDH-ES+A128KW, ECDH-ES+A192KW or ECDH-ES+A256KW")] string algo);
 
-        [OSAction(Description = "Create a RSA JWK Pair", ReturnName = "RSAJWKPair")]
+        [OSAction(Description = "Create a RSA JWK Pair (2048 bits). Use enc: RSA-OAEP, RSA-OAEP-256. Use sig: RS256, RS384, RS512, PS256, PS384, PS512.", ReturnName = "RSAJWKPair")]
         public JWK_Pair CreateRSAJWKPair(string use, string kid, string algo);
 
         /// <summary>
