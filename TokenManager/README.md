@@ -50,3 +50,15 @@ dotnet test TokenManagerTests/TokenManagerTests.csproj -c Release
 ```
 
 All tests run without internet access, except `GetTokensFromUrlTest`, which calls a live token endpoint. It is marked as `Integration` and is skipped unless `TOKENMANAGER_INTEGRATION_TESTS=1` is set.
+
+## Logging
+
+The service takes an `ILogger` in its constructor; the ODC host supplies it. Without a logger, nothing is logged.
+
+| Level | Event |
+| --- | --- |
+| Information | Token request started (host only); token response received (HTTP status, whether a refresh token was returned); key pair generated (use and curve, never key material); JWE encoded (claim count, never claim values). |
+| Warning | TLS certificate validation disabled for a token request (no certificate supplied). |
+| Error | Token request failed (host, HTTP status and exception type). The provider's `error_description` is returned to the caller but not logged. |
+
+Secrets, authorization codes, tokens, private key material and claim values are never logged.

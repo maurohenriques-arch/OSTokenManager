@@ -11,11 +11,35 @@ using TokenManager.Structures;
 using Jose;
 using System.Net;
 using System.Net.Security;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace TokenManager
 {
     public class TokenManagerService : ITokenManager
     {
+        private readonly ILogger _logger;
+
+        /// <summary>
+        /// Creates the service with a logger supplied by the ODC host.
+        /// </summary>
+        public TokenManagerService(ILogger logger)
+        {
+            _logger = logger ?? NullLogger.Instance;
+        }
+
+        /// <summary>
+        /// Creates the service without logging.
+        /// </summary>
+        public TokenManagerService() : this(NullLogger.Instance)
+        {
+        }
+
+        private static string GetHostForLog(string uri)
+        {
+            return Uri.TryCreate(uri, UriKind.Absolute, out Uri parsed) ? parsed.Host : "(invalid URL)";
+        }
+
 
 
         public string DecodeTokenFromPrivateKeyJWT(string encodedToken, string JWK)
@@ -40,6 +64,7 @@ namespace TokenManager
                 payload.Add(c.key, c.value);
             }
 
+            _logger.LogInformation("Encoded JWE with {ClaimCount} claims", claims.Count);
             return Jose.JWT.Encode(payload, recipientKey, JweAlgorithm.ECDH_ES_A128KW, JweEncryption.A128GCM);
         }
        
@@ -138,6 +163,7 @@ namespace TokenManager
             };
             pair.publicKey = pubJwk.ToJson();
             pair.privateKey = prvwk.ToJson();
+            _logger.LogInformation("Generated EC key pair for use {Use} on curve {Curve}", use, crv);
             return pair;
         }
 
@@ -177,6 +203,7 @@ namespace TokenManager
 
             pair.publicKey = pubJwk.ToJson();
             pair.privateKey = prvwk.ToJson();
+            _logger.LogInformation("Generated RSA key pair for use {Use}", use);
 
             return pair;
         }
@@ -370,10 +397,40 @@ namespace TokenManager
                     Content = content
                 };
 
-                HttpResponseMessage response = client.SendAsync(webRequest).GetAwaiter().GetResult();
+                string host = GetHostForLog(apiURI);
+                _logger.LogInformation("Requesting token from {Host}", host);
+
+                if (ignoreCertificateValidation && (certificateToAllow == null || certificateToAllow.Length == 0))
+                {
+                    _logger.LogWarning("TLS certificate validation is disabled for {Host}: no certificate was supplied", host);
+                }
+
+                HttpResponseMessage response;
+                try
+                {
+                    response = client.SendAsync(webRequest).GetAwaiter().GetResult();
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.LogError("Token request to {Host} failed before a response was received: {ExceptionType}", host, ex.GetType().Name);
+                    throw;
+                }
+
                 string responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-                return ParseTokenResponse(response.StatusCode, responseBody);
+                try
+                {
+                    TokenResponse tokenResponse = ParseTokenResponse(response.StatusCode, responseBody);
+                    _logger.LogInformation("Token response from {Host}: HTTP {StatusCode}, refresh token returned: {RefreshTokenReturned}",
+                        host, (int)response.StatusCode, !string.IsNullOrEmpty(tokenResponse.RefreshToken));
+                    return tokenResponse;
+                }
+                catch (Exception ex) when (ex is HttpRequestException || ex is InvalidOperationException)
+                {
+                    _logger.LogError("Token request to {Host} failed with HTTP {StatusCode}: {ExceptionType}",
+                        host, (int)response.StatusCode, ex.GetType().Name);
+                    throw;
+                }
             }
         }
 
