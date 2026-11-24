@@ -13,6 +13,7 @@ using Jose;
 using Jose.keys;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 using System.Net.Security;
 
 namespace TokenManager
@@ -268,6 +269,86 @@ namespace TokenManager
             return ignoreCertificateValidation;
         }
 
+        /// <summary>
+        /// Turns a token endpoint response into a TokenResponse.
+        /// Non-success statuses raise HttpRequestException with the HTTP status and any OAuth
+        /// error and error_description. Invalid or empty bodies, and bodies without access_token,
+        /// raise InvalidOperationException. The refresh_token is returned when the provider sends it.
+        /// </summary>
+        public static TokenResponse ParseTokenResponse(HttpStatusCode statusCode, string responseBody)
+        {
+            if (!((int)statusCode >= 200 && (int)statusCode <= 299))
+            {
+                throw new HttpRequestException(BuildTokenErrorMessage(statusCode, responseBody));
+            }
+
+            JSONTokenResponse jsonTokenResponse;
+            try
+            {
+                jsonTokenResponse = System.Text.Json.JsonSerializer.Deserialize<JSONTokenResponse>(responseBody ?? string.Empty);
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                throw new InvalidOperationException("The token endpoint returned a response that is not valid JSON.", ex);
+            }
+
+            if (jsonTokenResponse == null || string.IsNullOrWhiteSpace(jsonTokenResponse.AccessToken))
+            {
+                throw new InvalidOperationException("The token endpoint response does not contain an access_token.");
+            }
+
+            return new TokenResponse
+            {
+                AccessToken = jsonTokenResponse.AccessToken,
+                ExpiresIn = jsonTokenResponse.ExpiresIn,
+                RefreshToken = jsonTokenResponse.RefreshToken,
+                IdToken = jsonTokenResponse.IdToken,
+                Scope = jsonTokenResponse.Scope,
+                TokenType = jsonTokenResponse.TokenType
+            };
+        }
+
+        private static string BuildTokenErrorMessage(HttpStatusCode statusCode, string responseBody)
+        {
+            var message = new StringBuilder();
+            message.Append($"Token endpoint returned HTTP {(int)statusCode} ({statusCode}).");
+
+            try
+            {
+                using JsonDocument document = JsonDocument.Parse(responseBody ?? string.Empty);
+                if (document.RootElement.ValueKind == JsonValueKind.Object)
+                {
+                    string error = ReadStringProperty(document.RootElement, "error");
+                    string description = ReadStringProperty(document.RootElement, "error_description");
+
+                    if (error != null)
+                    {
+                        message.Append($" error: {error}.");
+                    }
+
+                    if (description != null)
+                    {
+                        const int maxLength = 500;
+                        string trimmed = description.Length > maxLength ? description.Substring(0, maxLength) + "..." : description;
+                        message.Append($" error_description: {trimmed}");
+                    }
+                }
+            }
+            catch (System.Text.Json.JsonException)
+            {
+                // The body is not JSON: report only the HTTP status, never the raw body.
+            }
+
+            return message.ToString();
+        }
+
+        private static string ReadStringProperty(JsonElement element, string name)
+        {
+            return element.TryGetProperty(name, out JsonElement value) && value.ValueKind == JsonValueKind.String
+                ? value.GetString()
+                : null;
+        }
+
         public TokenResponse GetTokensFromUrl(
             string code,
             string clientId,
@@ -307,21 +388,10 @@ namespace TokenManager
                     Content = content
                 };
 
-                var response = client.Send(webRequest);
-                response.EnsureSuccessStatusCode();
+                HttpResponseMessage response = client.SendAsync(webRequest).GetAwaiter().GetResult();
+                string responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-                string responseJson = response.Content.ReadAsStringAsync().Result;
-
-                var jsonTokenResponse = System.Text.Json.JsonSerializer.Deserialize<JSONTokenResponse>(responseJson);
-                TokenResponse tokenResponse = new TokenResponse
-                {
-                    AccessToken = jsonTokenResponse.AccessToken,
-                    ExpiresIn = jsonTokenResponse.ExpiresIn,
-                    IdToken = jsonTokenResponse.IdToken,
-                    Scope = jsonTokenResponse.Scope,
-                    TokenType = jsonTokenResponse.TokenType 
-                };
-                return tokenResponse;
+                return ParseTokenResponse(response.StatusCode, responseBody);
             }
         }
 

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -246,6 +248,74 @@ namespace TokenManager.Tests
             WithSecureGateway(null, () =>
                 Assert.ThrowsException<InvalidOperationException>(() =>
                     instance.GetTokensFromUrl("code", "id", "secret", "https://example.local/cb", "authorization_code", "https://secure-gateway:8080/token", false, null)));
+        }
+
+        [TestMethod()]
+        public void ParseTokenResponse_Success_MapsAllFields()
+        {
+            string body = "{\"access_token\":\"at-1\",\"expires_in\":3600,\"refresh_token\":\"rt-1\",\"id_token\":\"id-1\",\"scope\":\"openid profile\",\"token_type\":\"Bearer\"}";
+
+            TokenResponse response = TokenManagerService.ParseTokenResponse(HttpStatusCode.OK, body);
+
+            Assert.AreEqual("at-1", response.AccessToken);
+            Assert.AreEqual(3600, response.ExpiresIn);
+            Assert.AreEqual("rt-1", response.RefreshToken);
+            Assert.AreEqual("id-1", response.IdToken);
+            Assert.AreEqual("openid profile", response.Scope);
+            Assert.AreEqual("Bearer", response.TokenType);
+        }
+
+        [TestMethod()]
+        public void ParseTokenResponse_Success_WithoutRefreshToken_LeavesItEmpty()
+        {
+            TokenResponse response = TokenManagerService.ParseTokenResponse(HttpStatusCode.OK, "{\"access_token\":\"at-2\",\"expires_in\":60}");
+
+            Assert.AreEqual("at-2", response.AccessToken);
+            Assert.IsNull(response.RefreshToken);
+        }
+
+        [TestMethod()]
+        public void ParseTokenResponse_OAuthError_IncludesErrorAndDescription()
+        {
+            string body = "{\"error\":\"invalid_grant\",\"error_description\":\"Code expired\"}";
+
+            var ex = Assert.ThrowsException<HttpRequestException>(() =>
+                TokenManagerService.ParseTokenResponse(HttpStatusCode.BadRequest, body));
+
+            StringAssert.Contains(ex.Message, "400");
+            StringAssert.Contains(ex.Message, "invalid_grant");
+            StringAssert.Contains(ex.Message, "Code expired");
+        }
+
+        [TestMethod()]
+        public void ParseTokenResponse_NonJsonErrorBody_ReportsStatusOnly()
+        {
+            var ex = Assert.ThrowsException<HttpRequestException>(() =>
+                TokenManagerService.ParseTokenResponse(HttpStatusCode.BadGateway, "<html>internal-detail</html>"));
+
+            StringAssert.Contains(ex.Message, "502");
+            Assert.IsFalse(ex.Message.Contains("internal-detail"));
+        }
+
+        [TestMethod()]
+        public void ParseTokenResponse_InvalidJson_Throws()
+        {
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                TokenManagerService.ParseTokenResponse(HttpStatusCode.OK, "not json"));
+        }
+
+        [TestMethod()]
+        public void ParseTokenResponse_NullJson_Throws()
+        {
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                TokenManagerService.ParseTokenResponse(HttpStatusCode.OK, "null"));
+        }
+
+        [TestMethod()]
+        public void ParseTokenResponse_MissingAccessToken_Throws()
+        {
+            Assert.ThrowsException<InvalidOperationException>(() =>
+                TokenManagerService.ParseTokenResponse(HttpStatusCode.OK, "{\"token_type\":\"Bearer\"}"));
         }
 
         [TestMethod()]

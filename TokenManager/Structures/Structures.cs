@@ -61,5 +61,8 @@ namespace TokenManager.Structures
 
         [JsonPropertyName("id_token")]
         public string IdToken { get; set; }
+
+        [JsonPropertyName("refresh_token")]
+        public string RefreshToken { get; set; }
     }
 }
