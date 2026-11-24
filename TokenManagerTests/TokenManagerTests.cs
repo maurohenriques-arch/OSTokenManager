@@ -34,6 +34,16 @@ namespace TokenManager.Tests
         {
             TokenManagerService instance = new TokenManagerService();
             JWK_Pair pair = instance.CreateECJWKPair("enc", "P-256", "eueiryte87e97897", "ECDH-ES+A128KW");
+
+            using JsonDocument publicJwk = JsonDocument.Parse(pair.publicKey);
+            using JsonDocument privateJwk = JsonDocument.Parse(pair.privateKey);
+            Assert.AreEqual("EC", publicJwk.RootElement.GetProperty("kty").GetString());
+            Assert.AreEqual("P-256", publicJwk.RootElement.GetProperty("crv").GetString());
+            Assert.AreEqual("enc", publicJwk.RootElement.GetProperty("use").GetString());
+            Assert.AreEqual("eueiryte87e97897", publicJwk.RootElement.GetProperty("kid").GetString());
+            Assert.AreEqual("ECDH-ES+A128KW", publicJwk.RootElement.GetProperty("alg").GetString());
+            Assert.IsFalse(publicJwk.RootElement.TryGetProperty("d", out _), "The public key must not contain d.");
+            Assert.IsTrue(privateJwk.RootElement.TryGetProperty("d", out _), "The private key must contain d.");
         
         }
 
@@ -324,11 +334,27 @@ namespace TokenManager.Tests
             TokenManagerService instance = new TokenManagerService();
             JWK_Pair pair = instance.CreateRSAJWKPair("enc", "eueiryte87e97897", "RSA-OAEP");
 
+            using JsonDocument publicJwk = JsonDocument.Parse(pair.publicKey);
+            using JsonDocument privateJwk = JsonDocument.Parse(pair.privateKey);
+            Assert.AreEqual("RSA", publicJwk.RootElement.GetProperty("kty").GetString());
+            Assert.AreEqual("enc", publicJwk.RootElement.GetProperty("use").GetString());
+            Assert.AreEqual("RSA-OAEP", publicJwk.RootElement.GetProperty("alg").GetString());
+            Assert.IsTrue(publicJwk.RootElement.TryGetProperty("n", out _));
+            Assert.IsTrue(publicJwk.RootElement.TryGetProperty("e", out _));
+            Assert.IsFalse(publicJwk.RootElement.TryGetProperty("d", out _), "The public key must not contain d.");
+            Assert.IsTrue(privateJwk.RootElement.TryGetProperty("d", out _), "The private key must contain d.");
+
         }
 
         [TestMethod()]
+        [TestCategory("Integration")]
         public void GetTokensFromUrlTest()
         {
+            if (Environment.GetEnvironmentVariable("TOKENMANAGER_INTEGRATION_TESTS") != "1")
+            {
+                Assert.Inconclusive("Set TOKENMANAGER_INTEGRATION_TESTS=1 to run the live token endpoint test.");
+            }
+
             TokenManagerService tms = new TokenManagerService();
 
             string code = "";
@@ -338,7 +364,7 @@ namespace TokenManager.Tests
             string grantType = "authorization_code";
             string apiURL = "https://oauth2.googleapis.com/token";
             bool ignoreCertificateValidation = true;
-            byte[] certificateToAllow = null;
+            byte[]? certificateToAllow = null;
 
             var response = tms.GetTokensFromUrl(code, clientId, clientSecret, redirectUri, grantType, apiURL, ignoreCertificateValidation, certificateToAllow);
 
