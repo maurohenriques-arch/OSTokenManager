@@ -15,8 +15,8 @@ namespace TokenManager
         //[OSAction(Description = "Decode an encoded token in a JWE", ReturnName = "decodedToken")]
         //public string DecodeTokenFromPrivateKeyJWT(string encodedToken);
 
-        [OSAction(Description = "Encode a token in a JWE", ReturnName = "encodedToken")]
-        public string EncodeTokenFromPrivateKeyJWT(string kty, string use, string crv, string kid, string algo, List<TokenManager.Structures.PKJWT_Claim> claims);
+        [OSAction(Description = "Encode a token in a JWE for a recipient, using the recipient's public EC JWK", ReturnName = "encodedToken")]
+        public string EncodeTokenFromPrivateKeyJWT(string recipientPublicJWK, List<TokenManager.Structures.PKJWT_Claim> claims);
 
         
         [OSAction(Description = "Create an EC JWK Pair (private key and public key)", ReturnName = "ECJWKPair")]

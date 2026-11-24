@@ -39,11 +39,13 @@ namespace TokenManager
         //    return json;
         //}
 
-        public string EncodeTokenFromPrivateKeyJWT(string kty, string use, string crv, string kid, string algo, List<TokenManager.Structures.PKJWT_Claim> claims)
+        public string EncodeTokenFromPrivateKeyJWT(string recipientPublicJWK, List<TokenManager.Structures.PKJWT_Claim> claims)
         {
-            Jwk jwk = createECJWK(kty, use, crv, kid, algo);
-
-            string jwkString = jwk.ToJson();
+            Jwk recipientKey = Jwk.FromJson(recipientPublicJWK);
+            if (recipientKey.D != null)
+            {
+                throw new ArgumentException("recipientPublicJWK must contain the public key only; remove the private part (d).");
+            }
 
             var payload = new Dictionary<string, object>();
             foreach (var c in claims)
@@ -51,8 +53,7 @@ namespace TokenManager
                 payload.Add(c.key, c.value);
             }
 
-            string token = Jose.JWT.Encode(payload, jwk, JweAlgorithm.ECDH_ES_A128KW, JweEncryption.A128GCM);
-            return token;
+            return Jose.JWT.Encode(payload, recipientKey, JweAlgorithm.ECDH_ES_A128KW, JweEncryption.A128GCM);
         }
         private string CreatePublicJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
         {

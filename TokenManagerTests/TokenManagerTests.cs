@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TokenManager.Structures;
 
@@ -29,6 +30,35 @@ namespace TokenManager.Tests
             TokenManagerService instance = new TokenManagerService();
             JWK_Pair pair = instance.CreateECJWKPair("enc", "P-256", "eueiryte87e97897", "ECDH-ES+A128KW");
         
+        }
+
+        [TestMethod()]
+        public void EncodeThenDecodeRoundTrip()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            JWK_Pair pair = instance.CreateECJWKPair("enc", "P-256", "roundtrip-kid", "ECDH-ES+A128KW");
+            var claims = new List<PKJWT_Claim>
+            {
+                new PKJWT_Claim { key = "sub", value = "user-1" },
+                new PKJWT_Claim { key = "iss", value = "tokenmanager" }
+            };
+
+            string token = instance.EncodeTokenFromPrivateKeyJWT(pair.publicKey, claims);
+            string json = instance.DecodeTokenFromPrivateKeyJWT(token, pair.privateKey);
+
+            using JsonDocument doc = JsonDocument.Parse(json);
+            Assert.AreEqual("user-1", doc.RootElement.GetProperty("sub").GetString());
+            Assert.AreEqual("tokenmanager", doc.RootElement.GetProperty("iss").GetString());
+        }
+
+        [TestMethod()]
+        public void EncodeRejectsPrivateKey()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            JWK_Pair pair = instance.CreateECJWKPair("enc", "P-256", "reject-kid", "ECDH-ES+A128KW");
+            var claims = new List<PKJWT_Claim> { new PKJWT_Claim { key = "sub", value = "user-1" } };
+
+            Assert.ThrowsException<ArgumentException>(() => instance.EncodeTokenFromPrivateKeyJWT(pair.privateKey, claims));
         }
 
         [TestMethod()]
