@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -10,9 +9,6 @@ using System;
 using TokenManager.Structures;
 
 using Jose;
-using Jose.keys;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Net.Security;
 
@@ -46,21 +42,7 @@ namespace TokenManager
 
             return Jose.JWT.Encode(payload, recipientKey, JweAlgorithm.ECDH_ES_A128KW, JweEncryption.A128GCM);
         }
-        private string CreatePublicJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
-        {
-            Jwk jwk = createECJWK(kty, use, crv, kid, algo);
-            string jwkString = jwk.ToJson();
-            return jwk.ToJson();
-        }
-
        
-        private string CreatePrivateJWKForEncryptionForPrivateKeyJWT(string kty, string use, string crv, string kid, string algo)
-        {
-            Jwk jwk = createECJWK(kty, use, crv, kid, algo);
-            string jwkString = jwk.ToJson();
-            return jwk.ToJson();
-        }
-
         private static readonly string[] EcEncryptionAlgorithms = { "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW" };
         private static readonly string[] RsaEncryptionAlgorithms = { "RSA-OAEP", "RSA-OAEP-256" };
         private static readonly string[] RsaSignatureAlgorithms = { "RS256", "RS384", "RS512", "PS256", "PS384", "PS512" };
@@ -163,7 +145,7 @@ namespace TokenManager
         {
             ValidateRsaParameters(use, algo);
             JWK_Pair pair = new JWK_Pair();
-            var rsa = new RSACryptoServiceProvider(2048);
+            var rsa = RSA.Create(2048);
             var privateKey = rsa.ExportParameters(true);
             var publicKey = rsa.ExportParameters(false);
 
