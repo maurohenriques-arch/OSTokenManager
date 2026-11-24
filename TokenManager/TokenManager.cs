@@ -19,9 +19,6 @@ namespace TokenManager
 {
     public class TokenManagerService : ITokenManager
     {
-        private byte[] x = { REMOVED-EC-KEY-BYTES };
-        private byte[] y = { REMOVED-EC-KEY-BYTES };
-        private byte[] d = { REMOVED-EC-KEY-BYTES };
 
 
         public string DecodeTokenFromPrivateKeyJWT(string encodedToken, string JWK)
@@ -31,13 +28,6 @@ namespace TokenManager
             return json;
         }
 
-        //public string DecodeTokenFromPrivateKeyJWT(string encodedToken)
-        //{
-        //    var privateKey = EcdhKey.New(x, y, d, CngKeyUsages.KeyAgreement);
-        //    Jwk jwk = new Jwk(privateKey, isPrivate: true);
-        //    string json = Jose.JWT.Decode(encodedToken, jwk);
-        //    return json;
-        //}
 
         public string EncodeTokenFromPrivateKeyJWT(string recipientPublicJWK, List<TokenManager.Structures.PKJWT_Claim> claims)
         {
@@ -146,23 +136,6 @@ namespace TokenManager
         public string PKJWT_GetBuildInfo_Ext()
         {
             return ReadResource("TokenManager.buildinfo.txt");
-        }
-
-        private Jwk createJWK(string kty, string use, string crv, string kid, string algo)
-        {
-            var privateKey = EcdhKey.New(x, y);
-            Jwk jwk = new Jwk
-            {
-                Kty = kty,
-                Use = use,
-                Crv = crv,
-                X = Convert.ToBase64String(x),
-                Y = Convert.ToBase64String(y),
-                D = Convert.ToBase64String(d),
-                KeyId = kid,
-                Alg = algo
-            };
-            return jwk;
         }
 
         private Jwk createECJWK(string kty, string use, string crv, string kid, string algo)
