@@ -31,7 +31,13 @@ namespace TokenManager
         [OSAction(Description = "Get unique build information of this custom library.", ReturnName = "buildInfo")]
         public string PKJWT_GetBuildInfo_Ext();
 
-        [OSAction(Description = "Call POST token rest service with extra HTTPS configurations.", ReturnName = "TokenResponse")]
+        /// <summary>
+        /// Calls the token endpoint over HTTPS with a POST request.
+        /// If certificateToAllow is supplied, the server certificate must match it exactly and
+        /// ignoreCertificateValidation has no effect. Otherwise, certificate errors are ignored
+        /// only when ignoreCertificateValidation is true, which disables server certificate validation.
+        /// </summary>
+        [OSAction(Description = "Call POST token REST service over HTTPS. If certificateToAllow is supplied, the server certificate must match it; otherwise certificate errors are ignored only when ignoreCertificateValidation is true.", ReturnName = "TokenResponse")]
         public TokenResponse GetTokensFromUrl(
             [OSParameter(DataType = OSDataType.Text)]
             string code,

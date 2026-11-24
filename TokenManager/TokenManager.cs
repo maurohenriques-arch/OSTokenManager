@@ -202,6 +202,31 @@ namespace TokenManager
             return string.Empty;
         }
 
+        /// <summary>
+        /// Decides whether a server certificate is accepted.
+        /// If <paramref name="certificateToAllow"/> is supplied, the server certificate must be
+        /// byte-for-byte equal to it and <paramref name="ignoreCertificateValidation"/> has no effect.
+        /// Otherwise, certificate errors are ignored only when <paramref name="ignoreCertificateValidation"/> is true.
+        /// </summary>
+        public static bool ValidateServerCertificate(
+            X509Certificate2 serverCertificate,
+            SslPolicyErrors sslPolicyErrors,
+            bool ignoreCertificateValidation,
+            byte[] certificateToAllow)
+        {
+            if (certificateToAllow != null && certificateToAllow.Length > 0)
+            {
+                return serverCertificate != null && serverCertificate.RawData.SequenceEqual(certificateToAllow);
+            }
+
+            if (sslPolicyErrors == SslPolicyErrors.None)
+            {
+                return true;
+            }
+
+            return ignoreCertificateValidation;
+        }
+
         public TokenResponse GetTokensFromUrl(
             string code,
             string clientId,
@@ -217,22 +242,7 @@ namespace TokenManager
             handler.ClientCertificateOptions = ClientCertificateOption.Manual;
             handler.ServerCertificateCustomValidationCallback =
                 (httpRequestMessage, cert, cetChain, sslPolicyErrors) =>
-                {
-                    if (sslPolicyErrors == SslPolicyErrors.None)
-                        return true;
-
-                    if (ignoreCertificateValidation)
-                    {
-                        return true;
-                    }
-
-                    //if (certificateToAllow != null)
-                    //{
-                    //    // Explicitly trust the provided certificate
-                    //    return cert.Equals(certificateToAllow);
-                    //};
-                    return false;
-                };
+                    ValidateServerCertificate(cert, sslPolicyErrors, ignoreCertificateValidation, certificateToAllow);
 
             using (HttpClient client = new HttpClient(handler))
             {
