@@ -56,7 +56,7 @@ namespace TokenManager
             byte[] certificateToAllow = null
             );
 
-        [OSAction(Description = "Get the External Library generated Secure Gateway URL", ReturnName = "URL")]
+        [OSAction(Description = "Get the Secure Gateway host name from the SECURE_GATEWAY environment variable. Raises an error if it is not set or is not a valid host name.", ReturnName = "URL")]
         public string GetSecureGatewayBaseURL();
 
 

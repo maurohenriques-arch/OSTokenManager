@@ -193,6 +193,61 @@ namespace TokenManager.Tests
             Assert.ThrowsException<ArgumentException>(() => instance.CreateRSAJWKPair("enc", "kid", "ES256"));
         }
 
+        private static void WithSecureGateway(string? value, Action action)
+        {
+            string? original = Environment.GetEnvironmentVariable("SECURE_GATEWAY");
+            try
+            {
+                Environment.SetEnvironmentVariable("SECURE_GATEWAY", value);
+                action();
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("SECURE_GATEWAY", original);
+            }
+        }
+
+        [TestMethod()]
+        public void SecureGateway_NotSet_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            WithSecureGateway(null, () =>
+                Assert.ThrowsException<InvalidOperationException>(() => instance.GetSecureGatewayBaseURL()));
+        }
+
+        [TestMethod()]
+        public void SecureGateway_WithScheme_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            WithSecureGateway("https://gw.example.local", () =>
+                Assert.ThrowsException<InvalidOperationException>(() => instance.GetSecureGatewayBaseURL()));
+        }
+
+        [TestMethod()]
+        public void SecureGateway_WithPort_Throws()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            WithSecureGateway("gw.example.local:8080", () =>
+                Assert.ThrowsException<InvalidOperationException>(() => instance.GetSecureGatewayBaseURL()));
+        }
+
+        [TestMethod()]
+        public void SecureGateway_HostName_Returns()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            WithSecureGateway("gw.example.local", () =>
+                Assert.AreEqual("gw.example.local", instance.GetSecureGatewayBaseURL()));
+        }
+
+        [TestMethod()]
+        public void GetTokensFromUrl_SecureGatewayNotSet_ThrowsBeforeNetworkCall()
+        {
+            TokenManagerService instance = new TokenManagerService();
+            WithSecureGateway(null, () =>
+                Assert.ThrowsException<InvalidOperationException>(() =>
+                    instance.GetTokensFromUrl("code", "id", "secret", "https://example.local/cb", "authorization_code", "https://secure-gateway:8080/token", false, null)));
+        }
+
         [TestMethod()]
         public void CreateRSAJWKPair()
         {

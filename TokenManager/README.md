@@ -34,3 +34,11 @@ For `use = sig`, the algorithm must match the curve. Any other `crv` value is re
 ### use
 
 Only `sig` (signing) and `enc` (encryption) are accepted.
+
+## Secure Gateway configuration
+
+Calls to a URL containing `secure-gateway` are routed to the host set in the `SECURE_GATEWAY` environment variable.
+
+- Set `SECURE_GATEWAY` to the host name only, for example `gw.example.local`. Do not include a scheme, path or port.
+- Put the port in the URL you pass, for example `https://secure-gateway:8080/token`.
+- If `SECURE_GATEWAY` is not set, or is not a valid host name, the action raises an error that names the variable. Calls are not sent.

@@ -299,8 +299,7 @@ namespace TokenManager
 
                 if (apiURI.Contains("secure-gateway"))
                 {
-                    string secureGatewayBaseURL = Environment.GetEnvironmentVariable("SECURE_GATEWAY");
-                    apiURI = apiURI.Replace("secure-gateway", secureGatewayBaseURL);
+                    apiURI = apiURI.Replace("secure-gateway", GetSecureGatewayHost());
                 }
 
                 var webRequest = new HttpRequestMessage(HttpMethod.Post, apiURI)
@@ -326,9 +325,31 @@ namespace TokenManager
             }
         }
 
+        /// <summary>
+        /// Returns the Secure Gateway host from the SECURE_GATEWAY environment variable.
+        /// The value must be a host name only (no scheme, path or port); the port is set in the URL.
+        /// Throws InvalidOperationException when the variable is missing or invalid.
+        /// </summary>
+        private static string GetSecureGatewayHost()
+        {
+            string host = Environment.GetEnvironmentVariable("SECURE_GATEWAY");
+
+            if (string.IsNullOrWhiteSpace(host))
+            {
+                throw new InvalidOperationException("The SECURE_GATEWAY environment variable is not set. Set it to the Secure Gateway host name.");
+            }
+
+            if (!Regex.IsMatch(host, @"^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$"))
+            {
+                throw new InvalidOperationException($"The SECURE_GATEWAY environment variable '{host}' is not a valid host name. Use the host name only, without scheme, path or port.");
+            }
+
+            return host;
+        }
+
         public string GetSecureGatewayBaseURL()
         {
-            return Environment.GetEnvironmentVariable("SECURE_GATEWAY");
+            return GetSecureGatewayHost();
         }
     }
 }
