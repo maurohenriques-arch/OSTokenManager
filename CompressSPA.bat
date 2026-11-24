@@ -3,6 +3,6 @@ ECHO Deleting old archive if it exists...
 DEL /Q ".\Binaries\TokenManager.zip"
 
 ECHO Creating new archive...
-powershell -Command "Compress-Archive -Path '.\TokenManager\bin\Release\net8.0\publish\*' -DestinationPath '.\Binaries\TokenManager.zip' -Force"
+powershell -Command "Compress-Archive -Path '.\TokenManager\bin\Release\net10.0\publish\*' -DestinationPath '.\Binaries\TokenManager.zip' -Force"
 
 ECHO Done.
